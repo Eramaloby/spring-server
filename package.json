@@ -2,10 +2,16 @@
   "name": "spring-server",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "nodemon --watch src --exec ts-node src/app.ts"
+    "dev": "nodemon --watch src --exec \"node --loader ts-node/esm --experimental-specifier-resolution=node\" src/app.ts",
+    "lint": "eslint . --ext .ts --max-warnings=0",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"{src,apps,libs}/**/*.ts\"",
+    "check": "npm run lint && npm run format",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
@@ -15,10 +21,27 @@
     "express": "^5.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.32.0",
     "@types/express": "^5.0.3",
     "@types/node": "^24.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.3",
+    "globals": "^16.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
     "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "lint-staged": {                  
+    "*.ts": [
+      "eslint --fix",                
+      "prettier --write",            
+      "git add"                     
+    ]
   }
 }
