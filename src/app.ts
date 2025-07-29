@@ -1,10 +1,21 @@
 import express, { Request, Response } from 'express';
+import cors from 'cors';
+import fs from 'fs';
+
 import { Product, PRODUCTS_BlOCK_CONTENT } from './constants/productsBlockContent';
 
 import { LoginRequestBody, LoginSuccessResponse, LoginErrorResponse } from './types/loginTypes';
 
+import { LogRequestBody } from './types/logTypes';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+  })
+);
 
 app.use(express.json());
 
@@ -56,5 +67,18 @@ app.post(
     }
   }
 );
+
+app.post('/log', (req: Request<object, object, LogRequestBody>, res: Response) => {
+  const { level, message, details } = req.body;
+
+  console.log(`[${level.toUpperCase()}] Frontend Log: ${message}`, details || ''); // eslint-disable-line no-console
+
+  const logEntry = `${new Date().toISOString()} [${level.toUpperCase()}] ${message} ${JSON.stringify(details)}\n`;
+  fs.appendFile('application.log', logEntry, (err: NodeJS.ErrnoException | null) => {
+    if (err) console.error('Failed to write log to file:', err); // eslint-disable-line no-console
+  });
+
+  res.status(200).send('Log received');
+});
 
 app.listen(PORT);
