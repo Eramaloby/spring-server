@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { LogRequestBody } from '../types/logTypes';
+import { LogRequestBody } from '../types/log.types';
 import { logToFile } from '../services/logService';
 
 export const acceptLog = (req: Request<object, object, LogRequestBody>, res: Response) => {

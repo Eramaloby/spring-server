@@ -1,5 +1,5 @@
 import fs from 'fs';
-import type { LogRequestBody } from '../types/logTypes';
+import type { LogRequestBody } from '../types/log.types';
 
 export const logToFile = ({ level, message, details }: LogRequestBody) => {
   const logEntry = `${new Date().toISOString()} [${level.toUpperCase()}] ${message} ${JSON.stringify(details)}\n`;
