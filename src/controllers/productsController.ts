@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 import { type Product, PRODUCTS_BlOCK_CONTENT } from '../constants/productsBlockContent';
-import { searchProducts } from '../services/productsService';
+import { productService } from '../services/productsService';
 
 import AppError from '../utils/AppError';
 
@@ -15,7 +15,7 @@ export const getProducts = (
   let resultProducts: Product[] = PRODUCTS_BlOCK_CONTENT;
 
   if (search) {
-    resultProducts = searchProducts(search);
+    resultProducts = productService.searchProducts(search);
   }
 
   if (resultProducts.length === 0) {

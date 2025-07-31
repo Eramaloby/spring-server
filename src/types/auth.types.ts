@@ -1,6 +1,6 @@
 export interface LoginRequestBody {
-  login?: string;
-  password?: string;
+  login: string;
+  password: string;
 }
 
 export interface LoginSuccessResponse {
