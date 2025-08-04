@@ -1,9 +1,9 @@
 import express from 'express';
 
-import { acceptLog } from '../controllers/logController';
+import { logController } from '../controllers/logController';
 
 const logRouter = express.Router();
 
-logRouter.post('/log', acceptLog);
+logRouter.post('/log', logController.acceptLog);
 
 export { logRouter };
