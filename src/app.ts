@@ -25,5 +25,5 @@ app.use('/', apiRouter);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server live on http://localhost:${PORT}`); // eslint-disable-line no-console
+  console.info(`Server live on http://localhost:${PORT}`);
 });
