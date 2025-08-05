@@ -6,8 +6,8 @@ import { productsRouter } from './productsRoutes';
 
 const apiRouter = express.Router();
 
-apiRouter.use('/api', authRouter);
-apiRouter.use('/api', logRouter);
-apiRouter.use('/api', productsRouter);
+apiRouter.use('/', authRouter);
+apiRouter.use('/', logRouter);
+apiRouter.use('/', productsRouter);
 
 export { apiRouter };

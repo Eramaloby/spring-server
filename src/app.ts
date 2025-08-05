@@ -20,7 +20,7 @@ app.use(
 
 app.use(express.json());
 
-app.use('/', apiRouter);
+app.use('/api', apiRouter);
 
 app.use(errorHandler);
 
