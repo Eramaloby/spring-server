@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import type {
   LoginSuccessResponse,
   LoginRequestBody,
@@ -14,7 +14,8 @@ import { userService } from '../services/userService';
 class UserController {
   authUser = (
     req: Request<object, object, LoginRequestBody>,
-    res: Response<LoginSuccessResponse | LoginErrorResponse>
+    res: Response<LoginSuccessResponse | LoginErrorResponse>,
+    next: NextFunction
   ) => {
     const { login, password } = req.body;
 
@@ -23,10 +24,19 @@ class UserController {
     return res.status(200).json(result);
   };
 
-  signUpUser = (
+  signUpUser = async (
     req: Request<object, object, SignUpRequestBody>,
-    res: Response<SignUpSuccessResponse | SignUpErrorResponse>
-  ) => {};
+    res: Response<SignUpSuccessResponse | SignUpErrorResponse>,
+    next: NextFunction
+  ) => {
+    try {
+      const result = await userService.signUp(req.body);
+
+      return res.status(200).json(result);
+    } catch (e) {
+      next(e);
+    }
+  };
 }
 
 export const userController = new UserController();

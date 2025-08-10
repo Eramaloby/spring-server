@@ -1,13 +1,20 @@
 import AppError from '../utils/AppError';
-import { type UserData, User } from '../models/userModel';
+import { User } from '../models/userModel';
 import { hash } from 'bcrypt';
+
+import { tokenService } from './tokenService';
+import { UserDto } from '../dtos/user-dto';
 
 interface AuthenticateSuccessResult {
   message: string;
 }
 
-interface SignUpSuccessResult {
-  message: string;
+interface UserSignUpArgs {
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  age: number;
 }
 
 class UserService {
@@ -26,7 +33,7 @@ class UserService {
     }
   };
 
-  signUp = async (userData: UserData) => {
+  signUp = async (userData: UserSignUpArgs) => {
     const candidate = await User.findByUsername(userData.username);
     if (candidate) {
       throw new AppError(`This username ${userData.username} already in use`, 409);
@@ -34,8 +41,21 @@ class UserService {
 
     const hashedPassword = await hash(userData.password, 3);
 
-    const userDataWithHashedPassword = { ...userData, password: hashedPassword };
-    const user = await User.create(userDataWithHashedPassword);
+    const user = await User.create(
+      userData.username,
+      hashedPassword,
+      userData.firstName,
+      userData.lastName,
+      userData.age
+    );
+
+    const userDto = new UserDto({ username: user.username, id: user.id });
+    const tokens = tokenService.generateTokens(userDto);
+
+    return {
+      ...tokens,
+      user: userDto,
+    };
   };
 }
 

@@ -27,15 +27,21 @@ export class User {
     this.age = data.age;
   }
 
-  static create = async (data: UserData) => {
+  static create = async (
+    username: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    age: number
+  ) => {
     const query =
-      'INSERT INTO users (username, password, firstName, lastName, age) VALUES ($1, $2, $3, $4, $5) RETURNING *;';
+      'INSERT INTO users (username, password, "firstName", "lastName", age) VALUES ($1, $2, $3, $4, $5) RETURNING *;';
     const { rows }: QueryResult<UserData> = await pool.query(query, [
-      data.username,
-      data.password,
-      data.firstName,
-      data.lastName,
-      data.age,
+      username,
+      password,
+      firstName,
+      lastName,
+      age,
     ]);
 
     return new User(rows[0]);

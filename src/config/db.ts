@@ -11,4 +11,14 @@ const dbConfig: PoolConfig = {
 
 const pool = new Pool(dbConfig);
 
+export const showDatabaseState = () => {
+  pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+      console.error('Error connecting to the database', err.stack);
+    } else {
+      console.info('Connected to the database:', res.rows);
+    }
+  });
+};
+
 export default pool;
