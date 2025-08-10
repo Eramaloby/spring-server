@@ -12,31 +12,44 @@ import type {
 import { userService } from '../services/userService';
 
 class UserController {
-  authUser = (
-    req: Request<object, object, LoginRequestBody>,
-    res: Response<LoginSuccessResponse | LoginErrorResponse>,
-    next: NextFunction
-  ) => {
-    const { login, password } = req.body;
-
-    const result = userService.authenticate(login, password);
-
-    return res.status(200).json(result);
-  };
-
   signUpUser = async (
     req: Request<object, object, SignUpRequestBody>,
     res: Response<SignUpSuccessResponse | SignUpErrorResponse>,
     next: NextFunction
   ) => {
     try {
-      const result = await userService.signUp(req.body);
+      const userData = await userService.signUp(req.body);
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
 
-      return res.status(200).json(result);
-    } catch (e) {
-      next(e);
+      return res.status(200).json(userData);
+    } catch (error) {
+      next(error);
     }
   };
+
+  authUser = async (
+    req: Request<object, object, LoginRequestBody>,
+    res: Response<LoginSuccessResponse | LoginErrorResponse>,
+    next: NextFunction
+  ) => {
+    try {
+      const { login, password } = req.body;
+      const userData = await userService.authenticate(login, password);
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+
+      return res.status(200).json(userData);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  refresh = async () => {};
 }
 
 export const userController = new UserController();

@@ -1,6 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { body, validationResult } from 'express-validator';
-import { SignUpRequestBody } from '../types/signup.types';
+import express from 'express';
 import {
   validateUserRegistration,
   handleValidationErrors,
@@ -17,5 +15,6 @@ userRouter.post(
   handleValidationErrors,
   userController.signUpUser
 );
+userRouter.get('/refresh', userController.refresh);
 
 export { userRouter };

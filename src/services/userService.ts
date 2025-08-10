@@ -1,13 +1,9 @@
 import AppError from '../utils/AppError';
 import { User } from '../models/userModel';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 
 import { tokenService } from './tokenService';
 import { UserDto } from '../dtos/user-dto';
-
-interface AuthenticateSuccessResult {
-  message: string;
-}
 
 interface UserSignUpArgs {
   username: string;
@@ -18,19 +14,30 @@ interface UserSignUpArgs {
 }
 
 class UserService {
-  authenticate = (login: string, password: string): AuthenticateSuccessResult => {
+  authenticate = async (login: string, password: string) => {
     if (!login || !password) {
       throw new AppError('Login and password are required.', 400);
     }
 
-    const userLogin = 'admin';
-    const userPassword = '1234';
+    const user = await User.findByUsername(login);
 
-    if (login === userLogin && password === userPassword) {
-      return { message: 'Login successful.' };
-    } else {
-      throw new AppError('Wrong login or password!', 400);
+    if (!user) {
+      throw new AppError('No user with this username', 400);
     }
+
+    const isEqual = await compare(password, user.password);
+
+    if (!isEqual) {
+      throw new AppError('Wrong password!', 400);
+    }
+
+    const userDto = new UserDto({ username: user.username, id: user.id });
+    const tokens = tokenService.generateTokens(userDto);
+
+    return {
+      ...tokens,
+      user: userDto,
+    };
   };
 
   signUp = async (userData: UserSignUpArgs) => {

@@ -1,11 +1,13 @@
+import { UserDtoData } from '../dtos/user-dto';
 export interface LoginRequestBody {
   login: string;
   password: string;
 }
 
 export interface LoginSuccessResponse {
-  message: string;
-  user: { login: string; password: string };
+  accessToken: string;
+  refreshToken: string;
+  user: UserDtoData;
 }
 
 export interface LoginErrorResponse {
