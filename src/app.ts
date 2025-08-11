@@ -1,16 +1,19 @@
 import express from 'express';
 import cors from 'cors';
-import { config } from 'dotenv';
+import cookieParser from 'cookie-parser';
+
+import { config } from './envconfig';
 
 import { apiRouter } from './routes';
+
+import { showDatabaseState } from './config/db';
 
 import errorHandler from './middlewares/errorHandler';
 
 const app = express();
 
-config();
-const PORT = process.env.PORT || 3000;
-const ORIGIN = process.env.ORIGIN;
+const PORT = config.PORT || 3000;
+const ORIGIN = config.ORIGIN;
 
 app.use(
   cors({
@@ -20,10 +23,13 @@ app.use(
 
 app.use(express.json());
 
+app.use(cookieParser());
+
 app.use('/api', apiRouter);
 
 app.use(errorHandler);
 
 app.listen(PORT, () => {
+  showDatabaseState();
   console.info(`Server live on http://localhost:${PORT}`);
 });
