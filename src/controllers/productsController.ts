@@ -1,19 +1,21 @@
 import { Request, Response } from 'express';
 
-import { type Product, PRODUCTS_BlOCK_CONTENT } from '../constants/productsBlockContent';
+import type { ProductData } from '../models/productModel';
 import { productService } from '../services/productsService';
 
 class ProductsController {
-  getProducts = (
+  getProducts = async (
     req: Request<object, object, object, { search?: string }>,
-    res: Response<Product[] | { message: string }>
+    res: Response<ProductData[] | { message: string }>
   ) => {
     const search = req.query.search;
 
-    let resultProducts: Product[] = PRODUCTS_BlOCK_CONTENT;
+    let resultProducts: ProductData[] = [];
 
     if (search) {
-      resultProducts = productService.searchProducts(search);
+      resultProducts = await productService.search(search);
+    } else {
+      resultProducts = await productService.getAll();
     }
 
     return res.status(200).json(resultProducts);

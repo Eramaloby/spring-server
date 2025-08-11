@@ -1,16 +1,18 @@
-import { PRODUCTS_BlOCK_CONTENT } from '../constants/productsBlockContent';
+import { Product } from '../models/productModel';
 
 class ProductService {
-  searchProducts = (search: string) => {
+  search = async (search: string) => {
     const searchTerm = search.toLowerCase();
 
-    const resultProducts = PRODUCTS_BlOCK_CONTENT.filter(
-      (product) =>
-        product.description.toLowerCase().includes(searchTerm) ||
-        product.name.toLowerCase().includes(searchTerm)
-    );
+    const products = await Product.search(searchTerm);
 
-    return resultProducts;
+    return products;
+  };
+
+  getAll = async () => {
+    const products = await Product.getAll();
+
+    return products;
   };
 }
 
