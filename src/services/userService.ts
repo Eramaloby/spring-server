@@ -64,6 +64,17 @@ class UserService {
       user: userDto,
     };
   };
+
+  refresh = async (refreshToken: string) => {
+    const payload = tokenService.getDecodedPayload(refreshToken);
+
+    const user = await User.findById(payload.id);
+    if (!user) {
+      throw new AppError('No user with such token', 400);
+    }
+
+    return tokenService.generateAccessToken({ username: user.username, id: user.id });
+  };
 }
 
 export const userService = new UserService();

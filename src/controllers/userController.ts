@@ -10,6 +10,8 @@ import type {
   SignUpErrorResponse,
 } from '../types/signup.types';
 import { userService } from '../services/userService';
+import AppError from '../utils/AppError';
+import { RefreshErrorResponse, RefreshSuccessResponse } from '../types/refresh.types';
 
 class UserController {
   signUpUser = async (
@@ -24,7 +26,9 @@ class UserController {
         httpOnly: true,
       });
 
-      return res.status(200).json(userData);
+      return res
+        .status(200)
+        .json({ accessToken: userData.accessToken, message: 'Sign up successful.' });
     } catch (error) {
       next(error);
     }
@@ -43,13 +47,33 @@ class UserController {
         httpOnly: true,
       });
 
-      return res.status(200).json(userData);
+      return res
+        .status(200)
+        .json({ accessToken: userData.accessToken, message: 'Login successful.' });
     } catch (error) {
       next(error);
     }
   };
 
-  refresh = async () => {};
+  refresh = async (
+    req: Request,
+    res: Response<RefreshSuccessResponse | RefreshErrorResponse>,
+    next: NextFunction
+  ) => {
+    try {
+      const refreshToken = (req.cookies as { refreshToken?: string }).refreshToken;
+
+      if (!refreshToken) {
+        throw new AppError('No refresh token provided', 401);
+      }
+
+      const accessToken = await userService.refresh(refreshToken);
+
+      return res.status(200).json({ accessToken, message: 'Access token refreshed successfully.' });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export const userController = new UserController();

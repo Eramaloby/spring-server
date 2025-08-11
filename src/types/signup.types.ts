@@ -1,5 +1,3 @@
-import { UserDtoData } from '../dtos/user-dto';
-
 export interface SignUpRequestBody {
   username: string;
   password: string;
@@ -11,8 +9,7 @@ export interface SignUpRequestBody {
 
 export interface SignUpSuccessResponse {
   accessToken: string;
-  refreshToken: string;
-  user: UserDtoData;
+  message: string;
 }
 
 export interface SignUpErrorResponse {

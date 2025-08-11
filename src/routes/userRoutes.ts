@@ -15,6 +15,6 @@ userRouter.post(
   handleValidationErrors,
   userController.signUpUser
 );
-userRouter.get('/refresh', userController.refresh);
+userRouter.post('/refresh', userController.refresh);
 
 export { userRouter };
