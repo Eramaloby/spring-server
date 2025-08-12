@@ -47,9 +47,11 @@ class UserController {
         httpOnly: true,
       });
 
-      return res
-        .status(200)
-        .json({ accessToken: userData.accessToken, message: 'Login successful.' });
+      return res.status(200).json({
+        user: { username: userData.user.username },
+        accessToken: userData.accessToken,
+        message: 'Login successful.',
+      });
     } catch (error) {
       next(error);
     }

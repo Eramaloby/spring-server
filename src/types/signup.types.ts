@@ -8,6 +8,7 @@ export interface SignUpRequestBody {
 }
 
 export interface SignUpSuccessResponse {
+  user: { username: string };
   accessToken: string;
   message: string;
 }
