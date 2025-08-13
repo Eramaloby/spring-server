@@ -47,11 +47,33 @@ export class User {
     return new User(rows[0]);
   };
 
-  static getAll = async () => {
-    const query = 'SELECT * FROM users';
-    const { rows }: QueryResult<UserData> = await pool.query(query);
+  static getAll = async (filter: Partial<UserData> = {}, limit?: number) => {
+    const filterKeys = Object.keys(filter);
+
+    const queryValues = Object.values(filter);
+
+    let query = 'SELECT * FROM users';
+
+    if (filterKeys.length > 0) {
+      const conditions = filterKeys.map((key, index) => {
+        return `"${key}" = $${index + 1}`;
+      });
+      query += ` WHERE ${conditions.join(' AND ')}`;
+    }
+
+    if (limit) {
+      queryValues.push(limit);
+      query += ` LIMIT $${queryValues.length}`;
+    }
+
+    const { rows }: QueryResult<UserData> = await pool.query(query, queryValues);
 
     return rows.map((row) => new User(row));
+  };
+
+  static findOne = async (filter: Partial<UserData>) => {
+    const users = await this.getAll(filter, 1);
+    return users.length > 1 ? null : users[0];
   };
 
   static findById = async (id: number) => {

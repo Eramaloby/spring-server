@@ -19,7 +19,7 @@ class UserService {
       throw new AppError('Login and password are required.', 400);
     }
 
-    const user = await User.findByUsername(login);
+    const user = await User.findOne({ username: login });
 
     if (!user) {
       throw new AppError('No user with this username', 400);
@@ -41,7 +41,7 @@ class UserService {
   };
 
   signUp = async (userData: UserSignUpArgs) => {
-    const candidate = await User.findByUsername(userData.username);
+    const candidate = await User.findOne({ username: userData.username });
     if (candidate) {
       throw new AppError(`This username ${userData.username} already in use`, 409);
     }
@@ -68,7 +68,7 @@ class UserService {
   refresh = async (refreshToken: string) => {
     const payload = tokenService.getDecodedPayload(refreshToken);
 
-    const user = await User.findById(payload.id);
+    const user = await User.findOne({ id: payload.id });
     if (!user) {
       throw new AppError('No user with such token', 400);
     }
