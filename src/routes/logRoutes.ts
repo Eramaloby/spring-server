@@ -4,6 +4,6 @@ import { logController } from '../controllers/logController';
 
 const logRouter = express.Router();
 
-logRouter.post('/log', logController.acceptLog);
+logRouter.post('/', logController.acceptLog);
 
 export { logRouter };

@@ -5,6 +5,6 @@ import accessTokenValidator from '../middlewares/accessTokenValidator';
 
 const productsRouter = express.Router();
 
-productsRouter.get('/products', accessTokenValidator, productsController.getProducts);
+productsRouter.get('/', accessTokenValidator, productsController.getProducts);
 
 export { productsRouter };
