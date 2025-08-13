@@ -27,19 +27,17 @@ export class Product {
     this.src = data.src;
   }
 
-  static getAll = async () => {
-    const query = 'SELECT * FROM products';
-    const { rows }: QueryResult<ProductData> = await pool.query(query);
+  static get = async (searchTerm?: string) => {
+    let query = 'SELECT * FROM products';
+    let queryValues: string[] = [];
 
-    return rows.map((row) => new Product(row));
-  };
+    if (searchTerm) {
+      const searchPattern = `%${searchTerm}%`;
+      query += ' WHERE name ILIKE $1 OR description ILIKE $1';
+      queryValues = [searchPattern];
+    }
 
-  static search = async (searchTerm: string) => {
-    const query = 'SELECT * FROM products WHERE name ILIKE $1 OR description ILIKE $1;';
-
-    const searchPattern = `%${searchTerm}%`;
-
-    const { rows }: QueryResult<ProductData> = await pool.query(query, [searchPattern]);
+    const { rows }: QueryResult<ProductData> = await pool.query(query, queryValues);
 
     return rows.map((row) => new Product(row));
   };

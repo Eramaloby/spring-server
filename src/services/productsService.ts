@@ -1,16 +1,8 @@
 import { Product } from '../models/productModel';
 
 class ProductService {
-  search = async (search: string) => {
-    const searchTerm = search.toLowerCase();
-
-    const products = await Product.search(searchTerm);
-
-    return products;
-  };
-
-  getAll = async () => {
-    const products = await Product.getAll();
+  get = async (search?: string) => {
+    const products = await Product.get(search);
 
     return products;
   };

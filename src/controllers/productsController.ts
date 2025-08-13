@@ -12,11 +12,7 @@ class ProductsController {
 
     let resultProducts: ProductData[] = [];
 
-    if (search) {
-      resultProducts = await productService.search(search);
-    } else {
-      resultProducts = await productService.getAll();
-    }
+    resultProducts = await productService.get(search);
 
     return res.status(200).json(resultProducts);
   };
