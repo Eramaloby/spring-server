@@ -18,6 +18,7 @@ const ORIGIN = config.ORIGIN;
 app.use(
   cors({
     origin: ORIGIN,
+    credentials: true,
   })
 );
 

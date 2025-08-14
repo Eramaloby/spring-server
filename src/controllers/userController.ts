@@ -12,6 +12,7 @@ import type {
 import { userService } from '../services/userService';
 import AppError from '../utils/AppError';
 import { RefreshErrorResponse, RefreshSuccessResponse } from '../types/refresh.types';
+import { tokenService } from '../services/tokenService';
 
 class UserController {
   signUpUser = async (
@@ -23,6 +24,7 @@ class UserController {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
+    res.cookie('accessToken', userData.accessToken, { maxAge: 15 * 60 * 1000, httpOnly: true });
 
     return res
       .status(200)
@@ -39,6 +41,7 @@ class UserController {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
+    res.cookie('accessToken', userData.accessToken, { maxAge: 15 * 60 * 1000, httpOnly: true });
 
     return res.status(200).json({
       user: { username: userData.user.username },
@@ -54,7 +57,14 @@ class UserController {
       throw new AppError('No refresh token provided', 401);
     }
 
+    try {
+      tokenService.validateRefreshToken(refreshToken);
+    } catch {
+      throw new AppError('Invalid refresh token', 401);
+    }
+
     const accessToken = await userService.refresh(refreshToken);
+    res.cookie('accessToken', accessToken, { maxAge: 15 * 60 * 1000, httpOnly: true });
 
     return res.status(200).json({ accessToken, message: 'Access token refreshed successfully.' });
   };

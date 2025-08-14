@@ -3,8 +3,7 @@ import AppError from '../utils/AppError';
 import { tokenService } from '../services/tokenService';
 
 const accessTokenValidator = (req: Request, _res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization'];
-  const accessToken = authHeader && authHeader.split(' ')[1];
+  const accessToken = (req.cookies as { accessToken?: string }).accessToken;
 
   try {
     if (!accessToken) {

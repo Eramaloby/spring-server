@@ -7,20 +7,28 @@ const { sign, verify } = pkg;
 
 class TokenService {
   generateTokens = (payload: UserDtoData) => {
-    const accessToken = sign({ ...payload }, config.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-    const refreshToken = sign({ ...payload }, config.JWT_REFRESH_SECRET, { expiresIn: '30d' });
+    const accessToken = sign({ ...payload }, config.JWT_ACCESS_SECRET, { expiresIn: '1m' });
+    const refreshToken = sign({ ...payload }, config.JWT_REFRESH_SECRET, { expiresIn: '2m' });
 
     return { accessToken, refreshToken };
   };
 
   generateAccessToken = (payload: UserDtoData) => {
     const accessToken = sign({ ...payload }, config.JWT_ACCESS_SECRET, {
-      expiresIn: '15m',
+      expiresIn: '1m',
     });
     return accessToken;
   };
 
   getDecodedPayload = (refreshToken: string) => {
+    return verify(refreshToken, config.JWT_REFRESH_SECRET) as UserDtoData;
+  };
+
+  validateRefreshToken = (refreshToken: string) => {
+    if (!refreshToken) {
+      throw new AppError('Refresh token was not found', 401);
+    }
+
     return verify(refreshToken, config.JWT_REFRESH_SECRET) as UserDtoData;
   };
 
