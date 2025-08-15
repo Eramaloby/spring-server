@@ -4,8 +4,9 @@ export interface LoginRequestBody {
 }
 
 export interface LoginSuccessResponse {
+  user: { username: string };
+  accessToken: string;
   message: string;
-  user: { login: string; password: string };
 }
 
 export interface LoginErrorResponse {
